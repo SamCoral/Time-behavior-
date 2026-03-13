@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Time Based Behavior Tracker</title>
+<style>
+body{
+font-family: Arial;
+background:#f4f4f4;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+width:300px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+button{
+padding:10px;
+margin:5px;
+border:none;
+background:#007bff;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+#time{
+font-size:30px;
+margin:20px 0;
+}
+
+ul{
+text-align:left;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>⏳ Time Behavior Tracker</h1>
+
+<input type="text" id="activity" placeholder="Enter activity (Study, Prayer...)">
+
+<div class="timer">
+<h2 id="time">00:00:00</h2>
+</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="stopTimer()">Stop</button>
+<button onclick="resetTimer()">Reset</button><br>
+<button onclick="deleteTimer()">Delete</button>
+<button onclick="saveLogs()">Save</button>
+
+<h3>Activity Log</h3>
+<ul id="log"></ul>
+
+</div>
+
+<script>
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let timer;
+let running = false;
+
+function updateDisplay(){
+document.getElementById("time").innerText =
+String(hours).padStart(2,'0') + ":" +
+String(minutes).padStart(2,'0') + ":" +
+String(seconds).padStart(2,'0');
+}
+
+function startTimer(){
+
+if(!running){
+running = true;
+
+timer = setInterval(function(){
+
+seconds++;
+
+if(seconds == 60){
+seconds = 0;
+minutes++;
+}
+
+if(minutes == 60){
+minutes = 0;
+hours++;
+}
+
+updateDisplay();
+
+},1000);
+}
+
+}
+
+function stopTimer(){
+
+clearInterval(timer);
+running = false;
+
+let activity = document.getElementById("activity").value;
+
+if(activity !== ""){
+let log = document.getElementById("log");
+
+let li = document.createElement("li");
+
+li.innerText = activity + " - " + document.getElementById("time").innerText;
+
+log.appendChild(li);
+}
+
+}
+
+function resetTimer(){
+
+clearInterval(timer);
+running = false;
+
+seconds = 0;
+minutes = 0;
+hours = 0;
+
+updateDisplay();
+
+document.getElementById("activity").value = "";
+
+}
+
+function deleteTimer(){
+
+let log = document.getElementById("log");
+
+if(log.lastChild){
+log.removeChild(log.lastChild);
+}
+
+}
+
+function saveLogs(){
+
+let log = document.getElementById("log");
+
+localStorage.setItem("activities", log.innerHTML);
+
+alert("Activities saved successfully!");
+
+}
+</script>
+</body>
+</html>
